@@ -49,7 +49,7 @@ The new approach will address the issues listed above.
 
 ## Setup 
 
-Note : This work is being done on Ubuntu but will be ported to Centos 7 in future.
+Note : This work is being done on Ubuntu 16.04 but will be ported to Centos 7 in future.
 
 Install Docker :
 ```
@@ -88,4 +88,62 @@ Commands:
 
 ```
 
+Setup AWS credentials :
+
+We will pass the following AWS credentials in on the command line :
+```
+	--amazonec2-access-key
+	--amazonec2-secret-key 
+  --amazonec2-region
+	--amazonec2-zone 
+	--amazonec2-vpc-id 
+```
+## Create Swarm Test Cluster
+
+The test cluster will consist of a Swarm Master and 4 Swarm Nodes.  We will start 5 nodes and node1 will become the master.
+
+Create a nodes.txt file with contents :
+```
+172.0.5.1:node1
+172.0.5.2:node2
+172.0.5.3:node3
+172.0.5.4:node4
+172.0.5.5:node5
+```
+
+Let's create all 5 nodes.
+```
+
+for node in `cat nodes.txt`
+do
+ip=`echo $node |cut -d":" -f1`
+node_name=`echo $node |cut -d ":" -f2`
+
+docker-machine create --driver amazonec2 \
+	--amazonec2-access-key=<add your access key in here> \
+	--amazonec2-secret-key=<add your secret key in here> \
+  --amazonec2-region=us-west-2 \
+	--amazonec2-zone=c \
+	--amazonec2-vpc-id=<add in vpc-is here> \
+  --engine-opt cluster-store=consul://localhost:8500 \
+  --engine-opt cluster-advertise=eth0:2376 \
+  --swarm --swarm-master --swarm-image swarm \
+  --swarm-discovery consul://localhost:8500 \
+  --swarm-opt replication --swarm-opt advertise=${ip}:3376 \
+  $node_name
+done
+
+```
+
+If you see the following error then you might have a clock skew :
+```
+Running pre-create checks...
+Error with pre-create check: "AuthFailure: AWS was not able to validate the provided access credentials\n\tstatus code: 401, request id: "
+```
+
+To fix run :
+```
+sudo apt-get install ntpdate
+sudo ntpdate ntp.ubuntu.com
+```
 
