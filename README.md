@@ -62,7 +62,7 @@ curl -L https://github.com/docker/machine/releases/download/v0.6.0/docker-machin
 
 Install Docker Swarm :
 
-You can install the Swarm binary but it easier to use the Swarm Image.  The command below will pull the latest Swarm image and print out the help text.
+You can install the Swarm binary but it is easier to use the Swarm Image.  The command below will pull the latest Swarm image and print out the help text.
 ```
 docker run swarm --help
 
