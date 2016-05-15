@@ -1,6 +1,6 @@
 # swarm-test-cluster
 
-Code used to start a Swarm Cluster for the purpose of running tests
+Code used to start a Swarm Cluster for the purpose of running unit tests
 
 ## Goal
 
@@ -8,7 +8,9 @@ Create a seamlessly scalable test environment on which containerised unit tests 
 
 Using 2 tools from the Docker ecosystem (Machine and Swarm) we can create a scalable test environment in AWS and seamlessly scale our tests across a Swarm cluster.
 
-I'll put a number of "Checkpoints" into this tutorial which will help break the significant steps into smaller chunks.  If you hit a Checkpoint and everything has worked as expected then continue to the next step.  If you hit issues before reaching a Checkpoint then check for a solution in [Troubleshooting](Troubleshooting.md) before continuing.
+This walkthrough will include a number of "Checkpoints" which will help break the significant steps into smaller chunks.  If you hit a Checkpoint and everything has worked as expected then continue to the next step.  If you hit issues before reaching a Checkpoint then check for a solution in [Troubleshooting](Troubleshooting.md) before continuing.
+
+There are a number of areas of enhancement that will become apparent as you work through the manual steps.  These will be added to [Enhancements] (Enhancements.md).
 
 ## Background
 
@@ -18,7 +20,7 @@ We have been running unit tests in containers for a number of years and while th
 * A test run is currently executed on a single docker host.  
 * The number of containers used for a test run are restricted by the docker hosts memory, cpu, network and disk i/o
 
-We have essentially hit a glass ceiling in our test execution times due to these issues.  
+We have essentially hit a glass ceiling in our test execution times due to these restrictions.  
 
 ## Improvements
 
@@ -30,7 +32,7 @@ The new approach will address the issues listed above.
   
 * Swarm Test Cluster
 
-  Using Docker Machine and Docker Swarm we will spread test execution across multiple physical Docker hosts and leverage these addition resources to reduce test execution time.
+  Using Docker Machine and Docker Swarm we will spread test execution across multiple physical Docker hosts and leverage these additional resources to reduce test execution time.
   
 * Local Docker Registry
 
