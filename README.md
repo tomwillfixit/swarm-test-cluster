@@ -145,3 +145,13 @@ done
 
 # Checkpoint reached : You now have a simple 5 node cluster !!
 
+Here!!!
+
+
+## Teardown
+
+If you want to teardown the Swarm Cluster you can run the following command.  Warning : This will delete any EC2 instances that Machine created so use at own risk.
+```
+docker-machine rm -f $(docker-machine ls -q)
+```
+
