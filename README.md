@@ -100,16 +100,7 @@ Commands:
 
 ## Step 2 : Create Swarm Test Cluster
 
-The test cluster will consist of a Swarm Master and 4 Swarm Nodes.  We will start 5 nodes and node1 will become the master.
-
-Create a nodes.txt file with contents :
-```
-172.0.5.1:node1
-172.0.5.2:node2
-172.0.5.3:node3
-172.0.5.4:node4
-172.0.5.5:node5
-```
+The test cluster will consist of a Swarm Master and 4 Swarm Nodes.  We will start 5 nodes called qanode[1-5]. qanode1 will become the master.
 
 We will pass the following AWS credentials in on the command line :
 ```
@@ -123,10 +114,8 @@ We will pass the following AWS credentials in on the command line :
 Let's create 5 nodes.
 ```
 
-for node in `cat nodes.txt`
+for node in 1 2 3 4 5
 do
-ip=`echo $node |cut -d":" -f1`
-node_name=`echo $node |cut -d ":" -f2`
 
 docker-machine create --driver amazonec2 \
   --amazonec2-access-key=<add your access key in here> \
@@ -139,9 +128,23 @@ docker-machine create --driver amazonec2 \
   --engine-opt cluster-advertise=eth0:2376 \
   --swarm --swarm-master --swarm-image swarm \
   --swarm-discovery consul://localhost:8500 \
-  --swarm-opt replication --swarm-opt advertise=${ip}:3376 \
-  $node_name
+  --swarm-opt replication \
+  qanode$node
 done
+
+```
+
+Check that the 5 nodes have started successfully :
+```
+docker-machine ls
+
+Example Output :
+
+qanode1     -    amazonec2   Running   tcp://52.38.179.183:2376  qanode5 (master)   v1.11.1   
+qanode2     -    amazonec2   Running   tcp://52.38.97.178:2376   qanode5 (master)   v1.11.1   
+qanode3     -    amazonec2   Running   tcp://52.38.66.28:2376    qanode5 (master)   v1.11.1   
+qanode4     -    amazonec2   Running   tcp://52.38.49.16:2376    qanode5 (master)   v1.11.1   
+qanode5     -    amazonec2   Running   tcp://52.38.49.15:2376    qanode5 (master)   v1.11.1
 
 ```
 
