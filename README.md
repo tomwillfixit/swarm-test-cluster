@@ -100,9 +100,9 @@ Commands:
 
 ## Step 2 : Create Swarm Test Cluster
 
-The test cluster will consist of a Swarm Master and 4 Swarm Nodes.  We will start 5 nodes called qanode[1-5]. qanode1 will become the master.
+The test cluster will consist of a Swarm Master and 4 Swarm Nodes.  We will start 5 nodes called qanode[1-5]. qanode5 will become the master since it is the last to start.
 
-We will pass the following AWS credentials in on the command line :
+We will pass the following AWS credentials on the command line :
 ```
 --amazonec2-access-key
 --amazonec2-secret-key 
@@ -114,8 +114,7 @@ We will pass the following AWS credentials in on the command line :
 Let's create 5 nodes.
 ```
 
-for node in 1 2 3 4 5
-do
+for node in $(seq 1 5); do
 
 docker-machine create --driver amazonec2 \
   --amazonec2-access-key=<add your access key in here> \
@@ -150,8 +149,22 @@ qanode5     -    amazonec2   Running   tcp://52.38.49.15:2376    qanode5 (master
 
 # Checkpoint reached : You now have a simple 5 node cluster !!
 
-Here!!!
+# Step 3 : Install Consul on the 5 nodes
 
+The following command will use the "docker-machine ssh" command to login to each node, pull the Consul container and start it.
+
+```
+for node in $(seq 1 5); do
+
+    ip_address=$(docker-machine ssh qanode${node} ip a ls dev eth0 | sed -n 's,.*inet \(.*\)/.*,\1,p')
+    echo "Installing Consul on : $ip_address"
+    docker-machine ssh qanode${node} sudo docker run -d --restart=always --name consul_node$node \
+        -e CONSUL_BIND_INTERFACE=eth0 --net host consul agent -server \
+        -retry-join ${ip_address} -bootstrap-expect 5 -ui -client 0.0.0.0
+done
+```
+
+# Checkpoint reached : You now have Consul running across the cluster !!
 
 ## Teardown
 
