@@ -96,7 +96,7 @@ Commands:
 ```
 
 # Checkpoint reached : Congratulations! You have all the tools installed !!
-
+![Trophy](images/trophy.jpg)
 
 ## Step 2 : Create Swarm Test Cluster
 
