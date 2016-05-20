@@ -166,8 +166,8 @@ docker-machine create --driver amazonec2 \
 	--amazonec2-tags="Name,swarm-master-tc" \
 	--swarm \
 	--swarm-master \
-  	--swarm-discovery="consul://$(docker-machine ip consul):8500" \
-  	--engine-opt="cluster-store=consul://$(docker-machine ip consul):8500" \
+  	--swarm-discovery="consul://$(docker-machine ip consul-tc):8500" \
+  	--engine-opt="cluster-store=consul://$(docker-machine ip consul-tc):8500" \
   	--engine-opt="cluster-advertise=eth0:2376" \
   	swarm-master-tc
 ```
@@ -190,8 +190,8 @@ docker-machine create --driver amazonec2 \
         --amazonec2-instance-type=${AWS_INSTANCE_TYPE} \
         --amazonec2-tags="Name,swarm-node-tc-${node_number}" \
         --swarm \
-        --swarm-discovery="consul://$(docker-machine ip consul):8500" \
-        --engine-opt="cluster-store=consul://$(docker-machine ip consul):8500" \
+        --swarm-discovery="consul://$(docker-machine ip consul-tc):8500" \
+        --engine-opt="cluster-store=consul://$(docker-machine ip consul-tc):8500" \
         --engine-opt="cluster-advertise=eth0:2376" \
         swarm-node-tc-${node_number}
 ```
