@@ -95,14 +95,18 @@ Commands:
 
 ```
 
-# Checkpoint reached : Congrats you have all the tools installed !!
+# Checkpoint reached : Congratulations! You have all the tools installed !!
 
 
 ## Step 2 : Create Swarm Test Cluster
 
-The test cluster will consist of a Swarm Master and 4 Swarm Nodes.  We will start 5 nodes called qanode[1-5]. qanode5 will become the master since it is the last to start.
+The test cluster(tc) will consist of 1 Consul Node, a Swarm Master and 4 Swarm Nodes.  
 
-We will pass the following AWS credentials on the command line :
+* consul-tc
+* swarm-master-tc
+* swarm-node-tc-[1-4]
+
+Docker Machine requires the following AWS credentials to start a Machine on AWS :
 ```
 --amazonec2-access-key
 --amazonec2-secret-key 
@@ -111,60 +115,111 @@ We will pass the following AWS credentials on the command line :
 --amazonec2-vpc-id 
 ```
 
-Let's create 5 nodes.
+### Set Environment variables
 ```
+export AWS_ACCESS_KEY=<enter value>
+export AWS_SECRET_KEY=<enter value>
+export AWS_REGION=<enter value>
+export AWS_ZONE=<enter value>
+export AWS_VPC=<enter value>
+export AWS_SUBNET=<enter value>
+export AWS_INSTANCE_TYPE=<enter value>
 
-for node in $(seq 1 5); do
-
+```
+### Start Consul Machine and Service
+```
 docker-machine create --driver amazonec2 \
-  --amazonec2-access-key=<add your access key in here> \
-  --amazonec2-secret-key=<add your secret key in here> \
-  --amazonec2-region=us-west-2 \
-  --amazonec2-zone=c \
-  --amazonec2-vpc-id=<add in vpc-id here> \
-  --amazonec2-subnet-id=<add in subnet-id here> \
-  --engine-opt cluster-store=consul://localhost:8500 \
-  --engine-opt cluster-advertise=eth0:2376 \
-  --swarm --swarm-master --swarm-image swarm \
-  --swarm-discovery consul://localhost:8500 \
-  --swarm-opt replication \
-  qanode$node
-done
+	--amazonec2-access-key=${AWS_ACCESS_KEY} \
+	--amazonec2-secret-key=${AWS_SECRET_KEY} \
+  --amazonec2-region=${AWS_REGION} \
+	--amazonec2-zone=${AWS_ZONE} \
+	--amazonec2-vpc-id=${AWS_VPC} \
+	--amazonec2-subnet-id=${AWS_SUBNET} \
+	--amazonec2-instance-type=${AWS_INSTANCE_TYPE} \
+	--amazonec2-tags="Name,consul-tc" \
+  consul-tc 
+```
+
+### Start Consul service
+```
+eval $(docker-machine env consul-tc)
+
+docker run --name consul --restart=always -p 8400:8400 -p 8500:8500 \
+  -p 55:53/udp -d progrium/consul -server -bootstrap-expect 1 -ui-dir /ui
 
 ```
 
-Check that the 5 nodes have started successfully :
+# Checkpoint reached : Congratulations! You have Consul running !!
+
+## Start Swarm Master
+```
+docker-machine create --driver amazonec2 \
+	--amazonec2-access-key=${AWS_ACCESS_KEY} \
+	--amazonec2-secret-key=${AWS_SECRET_KEY} \
+  --amazonec2-region=${AWS_REGION} \
+	--amazonec2-zone=${AWS_ZONE} \
+	--amazonec2-vpc-id=${AWS_VPC} \
+	--amazonec2-subnet-id=${AWS_SUBNET} \
+	--amazonec2-instance-type=${AWS_INSTANCE_TYPE} \
+	--amazonec2-tags="Name,swarm-master-tc" \
+	--swarm \
+	--swarm-master \
+  --swarm-discovery="consul://$(docker-machine ip consul):8500" \
+  --engine-opt="cluster-store=consul://$(docker-machine ip consul):8500" \
+  --engine-opt="cluster-advertise=eth0:2376" \
+  swarm-master-tc
+```
+
+# Checkpoint reached : Congratulations! You have created a Swarm Master !!
+
+## Start Swarm Nodes
+```
+for node_number in $(seq 1 4); do
+docker-machine create --driver amazonec2 \
+        --amazonec2-access-key=${AWS_ACCESS_KEY} \
+        --amazonec2-secret-key=${AWS_SECRET_KEY} \
+        --amazonec2-region=${AWS_REGION} \
+        --amazonec2-zone=${AWS_REGION} \
+        --amazonec2-vpc-id=${AWS_VPC} \
+        --amazonec2-subnet-id=${AWS_SUBNET} \
+        --amazonec2-instance-type=${AWS_INSTANCE_TYPE} \
+        --amazonec2-tags="Name,swarm-node-tc-${node_number}" \
+        --swarm \
+        --swarm-discovery="consul://$(docker-machine ip consul):8500" \
+        --engine-opt="cluster-store=consul://$(docker-machine ip consul):8500" \
+        --engine-opt="cluster-advertise=eth0:2376" \
+        swarm-node-tc-${node_number}
+```
+  
+## Verify Swarm has started correctly
 ```
 docker-machine ls
 
-Example Output :
+Switch to swarm-master :
 
-qanode1     -    amazonec2   Running   tcp://52.38.179.183:2376  qanode5 (master)   v1.11.1   
-qanode2     -    amazonec2   Running   tcp://52.38.97.178:2376   qanode5 (master)   v1.11.1   
-qanode3     -    amazonec2   Running   tcp://52.38.66.28:2376    qanode5 (master)   v1.11.1   
-qanode4     -    amazonec2   Running   tcp://52.38.49.16:2376    qanode5 (master)   v1.11.1   
-qanode5     -    amazonec2   Running   tcp://52.38.49.15:2376    qanode5 (master)   v1.11.1
+eval $(docker-machine env --swarm swarm-master)
 
+List number of Nodes attached to Swarm :
+
+docker info | grep "^Nodes:"
 ```
 
-# Checkpoint reached : You now have a simple 5 node cluster !!
+# Checkpoint reached : Congratulations! You now have a fully functional Swarm Cluster!!
 
-# Step 3 : Install Consul on the 5 nodes
+## Step 3 : Create a docker-registry in the Swarm
 
-The following command will use the "docker-machine ssh" command to login to each node, pull the Consul container and start it.
+Now that we have a Swarm running we will start a docker-registry that will allow each node in the cluster to access the same registry.
 
+Switch to swarm-master (if not already done):
 ```
-for node in $(seq 1 5); do
-
-    ip_address=$(docker-machine ssh qanode${node} ip a ls dev eth0 | sed -n 's,.*inet \(.*\)/.*,\1,p')
-    echo "Installing Consul on : $ip_address"
-    docker-machine ssh qanode${node} sudo docker run -d --restart=always --name consul_node$node \
-        -e CONSUL_BIND_INTERFACE=eth0 --net host consul agent -server \
-        -retry-join ${ip_address} -bootstrap-expect 5 -ui -client 0.0.0.0
-done
+eval $(docker-machine env --swarm swarm-master)
 ```
 
-# Checkpoint reached : You now have Consul running across the cluster !!
+Start the docker-registry :
+```
+docker-compose up -d
+```
+
 
 ## Teardown
 
