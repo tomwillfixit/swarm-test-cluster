@@ -131,13 +131,13 @@ export AWS_INSTANCE_TYPE=<enter value>
 docker-machine create --driver amazonec2 \
 	--amazonec2-access-key=${AWS_ACCESS_KEY} \
 	--amazonec2-secret-key=${AWS_SECRET_KEY} \
-  --amazonec2-region=${AWS_REGION} \
+  	--amazonec2-region=${AWS_REGION} \
 	--amazonec2-zone=${AWS_ZONE} \
 	--amazonec2-vpc-id=${AWS_VPC} \
 	--amazonec2-subnet-id=${AWS_SUBNET} \
 	--amazonec2-instance-type=${AWS_INSTANCE_TYPE} \
 	--amazonec2-tags="Name,consul-tc" \
-  consul-tc 
+  	consul-tc 
 ```
 
 ### Start Consul service
@@ -156,7 +156,7 @@ docker run --name consul --restart=always -p 8400:8400 -p 8500:8500 \
 docker-machine create --driver amazonec2 \
 	--amazonec2-access-key=${AWS_ACCESS_KEY} \
 	--amazonec2-secret-key=${AWS_SECRET_KEY} \
-  --amazonec2-region=${AWS_REGION} \
+  	--amazonec2-region=${AWS_REGION} \
 	--amazonec2-zone=${AWS_ZONE} \
 	--amazonec2-vpc-id=${AWS_VPC} \
 	--amazonec2-subnet-id=${AWS_SUBNET} \
@@ -164,10 +164,10 @@ docker-machine create --driver amazonec2 \
 	--amazonec2-tags="Name,swarm-master-tc" \
 	--swarm \
 	--swarm-master \
-  --swarm-discovery="consul://$(docker-machine ip consul):8500" \
-  --engine-opt="cluster-store=consul://$(docker-machine ip consul):8500" \
-  --engine-opt="cluster-advertise=eth0:2376" \
-  swarm-master-tc
+  	--swarm-discovery="consul://$(docker-machine ip consul):8500" \
+  	--engine-opt="cluster-store=consul://$(docker-machine ip consul):8500" \
+  	--engine-opt="cluster-advertise=eth0:2376" \
+  	swarm-master-tc
 ```
 
 # Checkpoint reached : Congratulations! You have created a Swarm Master !!
@@ -216,6 +216,8 @@ eval $(docker-machine env --swarm swarm-master)
 ```
 
 Start the docker-registry :
+
+Code based on : https://github.com/jpetazzo/orchestration-workshop/blob/master/bin/setup-all-the-things.sh
 ```
 docker-compose up -d
 ```
