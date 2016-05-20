@@ -149,6 +149,14 @@ docker run --name consul --restart=always -p 8400:8400 -p 8500:8500 \
   -p 55:53/udp -d progrium/consul -server -bootstrap-expect 1 -ui-dir /ui
 
 ```
+## Verify Consul started
+```
+docker-machine ls
+
+NAME              ACTIVE   DRIVER      STATE     URL                       SWARM                      DOCKER    ERRORS
+consul-tc         *        amazonec2   Running   tcp://*.*.*.*:2376                                v1.11.1   
+```
+
 # Checkpoint: 
 ![Trophy](images/trophy.jpg)
 # Congratulations! You have Consul running !!
@@ -170,6 +178,15 @@ docker-machine create --driver amazonec2 \
   	--engine-opt="cluster-store=consul://$(docker-machine ip consul-tc):8500" \
   	--engine-opt="cluster-advertise=eth0:2376" \
   	swarm-master-tc
+```
+
+## Verify Swarm Master started
+```
+docker-machine ls
+
+NAME              ACTIVE   DRIVER      STATE     URL                       SWARM                      DOCKER    ERRORS
+consul-tc         *        amazonec2   Running   tcp://*.*.*.*:2376                                v1.11.1   
+swarm-master-tc   -        amazonec2   Running   tcp://*.*.*.*:2376   	swarm-master-tc (master)   v1.11.1
 ```
 
 # Checkpoint: 
