@@ -2,6 +2,8 @@
 
 Code used to start a Swarm Cluster for the purpose of running unit tests
 
+![swarm](images/swarm.png)
+
 ## Goal
 
 Create a seamlessly scalable test environment on which containerised unit tests can be run in a single container or across hundreds of containers.
