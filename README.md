@@ -94,9 +94,10 @@ Commands:
   help		Shows a list of commands or help for one command
 
 ```
-
-# Checkpoint reached : Congratulations! You have all the tools installed !!
+# Checkpoint: 
 ![Trophy](images/trophy.jpg)
+# Congratulations! You have all the tools installed !!
+
 
 ## Step 2 : Create Swarm Test Cluster
 
@@ -148,8 +149,9 @@ docker run --name consul --restart=always -p 8400:8400 -p 8500:8500 \
   -p 55:53/udp -d progrium/consul -server -bootstrap-expect 1 -ui-dir /ui
 
 ```
-
-# Checkpoint reached : Congratulations! You have Consul running !!
+# Checkpoint: 
+![Trophy](images/trophy.jpg)
+# Congratulations! You have Consul running !!
 
 ## Start Swarm Master
 ```
@@ -170,7 +172,10 @@ docker-machine create --driver amazonec2 \
   	swarm-master-tc
 ```
 
-# Checkpoint reached : Congratulations! You have created a Swarm Master !!
+# Checkpoint: 
+![Trophy](images/trophy.jpg)
+# Congratulations! You have created a Swarm Master !!
+
 
 ## Start Swarm Nodes
 ```
@@ -204,7 +209,10 @@ List number of Nodes attached to Swarm :
 docker info | grep "^Nodes:"
 ```
 
-# Checkpoint reached : Congratulations! You now have a fully functional Swarm Cluster!!
+# Checkpoint: 
+![Trophy](images/trophy.jpg)
+# Congratulations! You now have a fully functional Swarm Cluster!!
+
 
 ## Step 3 : Create a docker-registry in the Swarm
 
