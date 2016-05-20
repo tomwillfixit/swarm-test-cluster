@@ -220,7 +220,7 @@ docker-machine ls
 
 Switch to swarm-master :
 
-eval $(docker-machine env --swarm swarm-master)
+eval $(docker-machine env --swarm swarm-master-tc)
 
 List number of Nodes attached to Swarm :
 
@@ -238,7 +238,7 @@ Now that we have a Swarm running we will start a docker-registry that will allow
 
 Switch to swarm-master (if not already done):
 ```
-eval $(docker-machine env --swarm swarm-master)
+eval $(docker-machine env --swarm swarm-master-tc)
 ```
 
 Start the docker-registry :
