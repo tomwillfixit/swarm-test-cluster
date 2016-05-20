@@ -211,6 +211,7 @@ docker-machine create --driver amazonec2 \
         --engine-opt="cluster-store=consul://$(docker-machine ip consul-tc):8500" \
         --engine-opt="cluster-advertise=eth0:2376" \
         swarm-node-tc-${node_number}
+done
 ```
   
 ## Verify Swarm has started correctly
