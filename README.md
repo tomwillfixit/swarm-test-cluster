@@ -201,7 +201,7 @@ docker-machine create --driver amazonec2 \
         --amazonec2-access-key=${AWS_ACCESS_KEY} \
         --amazonec2-secret-key=${AWS_SECRET_KEY} \
         --amazonec2-region=${AWS_REGION} \
-        --amazonec2-zone=${AWS_REGION} \
+        --amazonec2-zone=${AWS_ZONE} \
         --amazonec2-vpc-id=${AWS_VPC} \
         --amazonec2-subnet-id=${AWS_SUBNET} \
         --amazonec2-instance-type=${AWS_INSTANCE_TYPE} \
