@@ -32,7 +32,7 @@ The new approach will address the issues listed above.
   
 * Swarm Test Cluster
 
-  Using Docker Machine and Docker Swarm we will spread test execution across multiple physical Docker hosts and leverage these additional resources to reduce test execution time.
+  Using Docker Machine and Docker Swarm we will spread test execution across multiple Docker hosts and leverage these additional resources to reduce test execution time.
   
 * Local Docker Registry
 
@@ -40,7 +40,7 @@ The new approach will address the issues listed above.
   
 * Consul Monitoring
 
-  We will use the official Consul docker image to monitor the test container health and to provide service discovery for shared test infrastructure containers within the cluster such as mysql, rabbitmq etc.
+  We will use the progrium Consul docker image to monitor the test container health and to provide service discovery for shared test infrastructure containers within the cluster such as mysql, rabbitmq etc.
 
 ## Requirements
 
@@ -246,8 +246,15 @@ Start the docker-registry :
 Code based on : https://github.com/jpetazzo/orchestration-workshop/blob/master/bin/setup-all-the-things.sh
 ```
 docker-compose up -d
+
+Scale up the docker-registry frontend :
+
+docker-compose scale frontend=4
 ```
 
+# Checkpoint: 
+![Trophy](images/trophy.jpg)
+# Congratulations! You now have docker-registry running in your cluster!!
 
 ## Teardown
 
