@@ -251,12 +251,68 @@ docker-compose up -d
 
 Scale up the docker-registry frontend :
 
-docker-compose scale frontend=4
+docker-compose scale frontend=5
 ```
 
 # Checkpoint: 
 ![Trophy](images/trophy.jpg)
 # Congratulations! You now have docker-registry running in your cluster!!
+
+## Step 4 : Push to registry and run containers across the Swarm
+
+In this step we will pull an alpine linux image, modify the image, push to the registry and then each cluster node will run containers based on this modified image.
+
+```
+eval $(docker-machine env --swarm swarm-master-tc)
+
+docker pull alpine:latest
+docker run -it --cidfile="container_id" alpine:latest /bin/sh
+
+echo "Tests will run from this container" > /tmp/output
+exit
+```
+
+Save the change :
+```
+docker commit `cat container_id` localhost:5000/alpine:modified
+```
+
+Push the new image to the local docker-registry :
+```
+docker push localhost:5000/alpine:modified
+```
+
+If you see the following error :
+
+Put http://localhost:5000/v1/repositories/alpine/: dial tcp 127.0.0.1:5000: getsockopt: connection refused
+
+Then you will need to login to the AWS console and add port 5000 to the inbound port of the docker-machine security group.
+
+
+At this point we have a modified image which each of the nodes can run.  Let's test this out.
+```
+for node_number in $(seq 1 4); do
+    docker run -d 127.0.0.1:5000/alpine:modified /bin/sh -c "while(true); do cat /tmp/output;sleep 60; done"
+done
+```
+
+Now check where the containers are running :
+```
+CONTAINER ID        IMAGE                            COMMAND                  CREATED              STATUS              PORTS                      NAMES
+409cd9b4f853        127.0.0.1:5000/alpine:modified   "/bin/sh -c 'while(tr"   About a minute ago   Up About a minute                              swarm-master-tc/serene_ride
+7e6603dee9b1        127.0.0.1:5000/alpine:modified   "/bin/sh -c 'while(tr"   About a minute ago   Up About a minute                              swarm-node-tc-4/loving_mcclintock
+c5286db16822        127.0.0.1:5000/alpine:modified   "/bin/sh -c 'while(tr"   About a minute ago   Up About a minute                              swarm-node-tc-3/pedantic_goodall
+263d988962c9        127.0.0.1:5000/alpine:modified   "/bin/sh -c 'while(tr"   About a minute ago   Up About a minute                              swarm-node-tc-1/small_sammet
+eb33de99b305        127.0.0.1:5000/alpine:modified   "/bin/sh -c 'while(tr"   About a minute ago   Up About a minute                              swarm-master-tc/drunk_payne
+
+```
+
+You can see from the container names that the containers have started across different nodes.
+
+# Checkpoint: 
+![Trophy](images/flag.jpg)
+# Congratulations! You are now setup and ready to run your containerised unit tests across a Swarm Cluster!!
+
 
 ## Teardown
 
