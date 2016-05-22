@@ -1,6 +1,6 @@
 # swarm-test-cluster
 
-Code used to start a Swarm Cluster for the purpose of running unit tests
+Create a simple Swarm Cluster for the purpose of running unit tests
 
 ![swarm](images/swarm.png)
 
@@ -28,29 +28,29 @@ We have essentially hit a glass ceiling in our test execution times due to these
 
 The new approach will address the issues listed above.  
 
-* Dynamic testlist
+* **Dynamic testlist**
 
   Some work will be required at the testsuite level to create a dynamic list of tests which containers will query at runtime.  We will store the testlist in a single mysql db container accessible to the entire cluster.  Each new test container will query which tests need to be run and will reserve a "chunk" of tests which will be run within the test container.  These "chunks" will be configurable to allow for larger numbers of tests to be run in each test container.  Note : It is important that the unit tests do not have dependencies on previously run tests.
   
-* Swarm Test Cluster
+* **Swarm Test Cluster**
 
   Using Docker Machine and Docker Swarm we will spread test execution across multiple Docker hosts and leverage these additional resources to reduce test execution time.
   
-* Local Docker Registry
+* **Local Docker Registry**
 
   The Swarm Cluster will have a single docker registry which will store any images required by the unit tests.  Each Docker host will pull from this local registry.  This gives us the additional benefit of reducing our reliance on the private docker registry shared across the rest of the organisation.
   
-* Consul Monitoring
+* **Consul Monitoring**
 
   We will use the progrium Consul docker image to monitor the test container health and to provide service discovery for shared test infrastructure containers within the cluster such as mysql, rabbitmq etc.
 
 ## Requirements
 
-* Docker
-* Docker Machine
-* Docker Swarm
-* AWS Account
-* Packer (Not needed right now. In future we will use Packer to create the AMI used within the cluster.)
+* **Docker**
+* **Docker Machine**
+* **Docker Swarm**
+* **AWS Account**
+* **Packer** (Not needed right now. In future we will use Packer to create the AMI used within the cluster.)
 
 ## Troubleshooting
 
@@ -60,16 +60,16 @@ When setting up the Swarm cluster the first time you may come across a few minor
 
 Note : This work is being done on Ubuntu 16.04 but will be ported to Centos 7 in future.
 
-Install Docker :
+Install **Docker** :
 ```
 https://docs.docker.com/engine/installation/linux/ubuntulinux/
 ```
-Install Docker Machine : 
+Install **Docker Machine** : 
 ```
 curl -L https://github.com/docker/machine/releases/download/v0.6.0/docker-machine-`uname -s`-`uname -m` > /usr/local/bin/docker-machine && chmod +x /usr/local/bin/docker-machine
 ```
 
-Install Docker Swarm :
+Install **Docker Swarm** :
 
 You can install the Swarm binary but it is easier to use the Swarm Image.  The command below will pull the latest Swarm image and print out the help text.
 ```
@@ -96,7 +96,7 @@ Commands:
   help		Shows a list of commands or help for one command
 
 ```
-# Checkpoint: 
+# Checkpoint 1
 ![Trophy](images/trophy.jpg)
 # Congratulations! You have all the tools installed !!
 
@@ -159,7 +159,7 @@ NAME              ACTIVE   DRIVER      STATE     URL                       SWARM
 consul-tc         *        amazonec2   Running   tcp://*.*.*.*:2376                                v1.11.1   
 ```
 
-# Checkpoint: 
+# Checkpoint 2
 ![Trophy](images/trophy.jpg)
 # Congratulations! You have Consul running !!
 
@@ -191,7 +191,7 @@ consul-tc         *        amazonec2   Running   tcp://*.*.*.*:2376             
 swarm-master-tc   -        amazonec2   Running   tcp://*.*.*.*:2376   	swarm-master-tc (master)   v1.11.1
 ```
 
-# Checkpoint: 
+# Checkpoint 3
 ![Trophy](images/trophy.jpg)
 # Congratulations! You have created a Swarm Master !!
 
@@ -229,7 +229,7 @@ List number of Nodes attached to Swarm :
 docker info | grep "^Nodes:"
 ```
 
-# Checkpoint: 
+# Checkpoint 4
 ![Trophy](images/trophy.jpg)
 # Congratulations! You now have a fully functional Swarm Cluster!!
 
@@ -254,7 +254,7 @@ Scale up the docker-registry frontend :
 docker-compose scale frontend=5
 ```
 
-# Checkpoint: 
+# Checkpoint 5
 ![Trophy](images/trophy.jpg)
 # Congratulations! You now have docker-registry running in your cluster!!
 
