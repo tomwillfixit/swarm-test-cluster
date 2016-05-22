@@ -309,9 +309,9 @@ eb33de99b305        127.0.0.1:5000/alpine:modified   "/bin/sh -c 'while(tr"   Ab
 
 You can see from the container names that the containers have started across different nodes.
 
-# Checkpoint: 
+# Congratulations!  
 ![Trophy](images/flag.jpg)
-# Congratulations! You are now setup and ready to run your containerised unit tests across a Swarm Cluster!!
+# You are now setup and ready to run your containerised unit tests across a Swarm Cluster!!
 
 
 ## Teardown
