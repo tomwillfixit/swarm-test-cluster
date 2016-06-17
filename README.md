@@ -320,6 +320,19 @@ You can see from the container names that the containers have started across dif
 ![Trophy](images/flag.jpg)
 # You are now setup and ready to run your containerised unit tests across a Swarm Cluster!!
 
+# Advanced : Create a GlusterFS shared volume between cluster nodes
+
+For more details on what GlusterFS check out : https://www.gluster.org/
+
+It is really useful to have a shared volume in the test cluster in which results and logs can be aggregated.  It might also be preferable to store the source code to be tested on the shared volume.  The following script will create a GlusterFS volume based on the Swarm cluster created above.
+
+```
+./setup_glusterfs_on_swarm.sh shared_volume
+```
+
+This will create a volume called shared_volume which will be mounted on /home/shared_volume on each of the cluster nodes.
+The test containers can then mount this volume at run time.
+
 
 ## Teardown
 
